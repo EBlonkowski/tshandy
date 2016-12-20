@@ -1,5 +1,3 @@
-source(file.path('..', 'core', 'daily_cluster_model.R'), chdir = TRUE)
-source(file.path('..', 'core', 'shuya_SVR.R'), chdir = TRUE)
 
 view_col_selection <- function(tse, input_id = 'SC_choose_cols'){
   # input check
@@ -31,6 +29,13 @@ algos$del <- list(
     NULL
   })
 
+split_ui <- function(split_ratio, map_out) {
+  tagList(
+    p('Split ratio: ', split_ratio),
+    p('Column created: ', map_out)
+  )
+}
+
 algos$split <- list(
   ui = function(input, tsev) {
     div(
@@ -42,9 +47,12 @@ algos$split <- list(
     )
   },
   build = function(input, tsev) {
-    tsev$tse <- tsev$tse %>% split_tse(input$SE_split_ratio/100, input$SE_map_out)
+    tsev$tse <- tsev$tse %>% split_tse(input$SE_split_ratio/100, 
+                                       input$SE_map_out)
     tsev <- add_algo_meta(tsev, algo_meta('Create train column', 
-                                          split_ui(input$SE_split_ratio, input$SE_map_out), NULL, NULL))
+                                          split_ui(input$SE_split_ratio,
+                                                   input$SE_map_out), NULL, 
+                                          NULL))
     tsev
   })
 
@@ -207,6 +215,13 @@ ui_variable_lag <- function(input, tsev, var_name) {
     )
 }
 
+ui_map_train <- function(input, tsev) {
+  selectInput("SE_map_train", label = "Map train", 
+              choices = union(get_cols_class(tsev$tse),
+                              get_cols_type(tsev$tse, 'logical')),
+              selected = input$SE_map_train)
+} 
+
 algos$shuya_svm <- list(
   ui = function(input, tsev) {
     # set the default choice of the component select
@@ -223,9 +238,12 @@ algos$shuya_svm <- list(
       ),
       p(
         'We can select the variables that SVM will perform onto. Usually these',
-        'variables include weather and the load that we want to predict. For each',
-        'of those variables we can select lag orders. This is when we expect not only',
-        'the current value of the variable to influence the output (load) but also its past values'
+        'variables include weather and the load that we want to predict. 
+        For each',
+        'of those variables we can select lag orders. This is when we expect not
+        only',
+        'the current value of the variable to influence the output (load) but 
+        also its past values'
       ),
       p(
         'Since this algorithm makes use of previous values,',
@@ -245,8 +263,7 @@ algos$shuya_svm <- list(
         
         column(width = 4,
           textInput("SE_map_out", label = "Map out"),
-          selectInput("SE_map_train", label = "Map train", 
-                           choices = get_value_cols(tsev$tse)))
+          ui_map_train(input, tsev))
       ),
       numericInput('SE_n_predictor', 'Number of predictor variables', 
                    n_predictor, min = 0, max = length(get_value_cols(tsev$tse)), step = 1),

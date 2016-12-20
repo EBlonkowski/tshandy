@@ -5,7 +5,7 @@
 #
 #
 #
-##########################################################
+################################################################################
 
 # Question: quand utiliser des wellPanel ou pas?
 # 1ere solution: toujours utiliser des wellPanel: chaque element est dans un wellPanel, les controles
@@ -39,20 +39,20 @@ ui <- shinyUI(fluidPage(
   
   navbarPage("Time-series handiman", selected = 'Edit',
      
-##########################################################
+################################################################################
 # Load import panel        
     tabPanel('Load/import',
       uiOutput('load_save_comp')
     ),
 
-##########################################################
+################################################################################
 # Edition panel
     tabPanel('Edit',
       uiOutput('algorithms_comp'),
       uiOutput('history_comp')
   ),
 
-##########################################################
+################################################################################
 # Tools panel
     tabPanel('Visualization',
       # Sidebar for selection and main panel for display

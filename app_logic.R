@@ -1,9 +1,6 @@
 # controller part
 # the controller holds the app logic
 
-source(file.path('..', 'core', 'time-serie.R'), chdir = TRUE)
-source(file.path('..', 'core', 'models.R'), chdir = TRUE)
-
 #------------------------------------------------------
 # tse_visu class
 
@@ -34,7 +31,8 @@ is_null_tsev <- function(tsev) {
 #------------------------------------------------------
 # Algo meta class
 
-algo_meta <- function(name, custom_ui, show_table, show_summary, timestamp = Sys.time()) {
+algo_meta <- function(name, custom_ui, show_table, show_summary,
+                      timestamp = Sys.time()) {
   structure(list(name = name, 
                  timestamp = timestamp, 
                  custom_ui = custom_ui,
@@ -67,7 +65,7 @@ is.algo_meta <- function(obj) {
 
 
 
-##########################################################
+################################################################################
 # Models and validation
 
 # previous version - no longer in use
@@ -98,11 +96,13 @@ store_algo <- function(tsev, algo, name, colx, colout, coltrain) {
   )
   
   # compute perf indicators
-  perf <- performance_indicators(tsev$tse, colx, colout, coltrain, t1[[3]], t2[[3]], dim(tsev$tse)[1])
+  perf <- performance_indicators(tsev$tse, colx, colout, coltrain, t1[[3]],
+                                 t2[[3]], dim(tsev$tse)[1])
   
   # update dataset with algorithm metadata
   add_algo_meta(tsev, 
-                algo_meta(name, NULL, t(structure(c(perf, recursive = TRUE), names = names(perf))), NULL))
+                algo_meta(name, NULL, t(structure(c(perf, recursive = TRUE),
+                                                  names = names(perf))), NULL))
 }
 
 # function to compute metrics about a forecasting algorithm
@@ -127,11 +127,13 @@ store_forecasting <- function(tsev, algo, name, colx, colout, coltrain) {
   })
   
   # compute perf indicators
-  perf <- performance_indicators(tsev$tse, colx, colout, coltrain, t1[[3]], t2[[3]], dim(tsev$tse)[1])
+  perf <- performance_indicators(tsev$tse, colx, colout, coltrain, t1[[3]],
+                                 t2[[3]], dim(tsev$tse)[1])
   
   # update dataset with algorithm metadata
   add_algo_meta(tsev, 
-                algo_meta(name, NULL, t(structure(c(perf, recursive = TRUE), names = names(perf))), NULL))
+                algo_meta(name, NULL, t(structure(c(perf, recursive = TRUE),
+                                                  names = names(perf))), NULL))
 }
 
 restore <- function(file) {

@@ -1,4 +1,3 @@
-source(file.path('..','core', 'R-views.R'), chdir = TRUE)
 source('app_logic.R', chdir = TRUE)
 source('shiny-view.R', chdir = TRUE)
 
@@ -9,6 +8,7 @@ library(psych)
 library(magrittr)
 library(dplyr)
 library(reshape2)
+library(timeserie)
 
 # By default, the file size limit is 5MB. It can be changed by
 # setting this option. Here we'll raise limit to 'max_mb_upload' MB.
