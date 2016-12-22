@@ -1,4 +1,5 @@
-
+#------------------------------------------------------------------------------#
+# Edition part of the app
 
 output$algorithms_comp <- renderUI({
   # set the default choice of the algorithm select
@@ -6,7 +7,9 @@ output$algorithms_comp <- renderUI({
   if(is.null(choice)) choice <- 'none'
 
   tagList(
-    # Choice of algorithm panel
+    
+#------------------------------------------------------------------------------#
+# Choice of algorithm panel
     div(class = 'panel panel-primary',
         div(class = 'panel-heading', 
             fluidRow(column(width = 1, h3(icon('cog', lib = 'glyphicon'))),
@@ -30,8 +33,9 @@ output$algorithms_comp <- renderUI({
           ) # panel body
         ) # algorithm panel
     ),
-    
-    # History panel
+
+#------------------------------------------------------------------------------#
+# History panel
     div(class = 'panel panel-green',
         div(class = 'panel-heading', 
             fluidRow(column(width = 1, h3(icon('search', lib = 'glyphicon'))),
@@ -40,17 +44,23 @@ output$algorithms_comp <- renderUI({
         div(class = 'panel-body',
             # select metrics/metadata
             selectInput('SE_choose_meta', 'Select past algorithm:',
-                        choices = 
-                          structure(as.list(seq_along(app_state$tsev$algo_meta)),
-                                            names = 
-                                      name_vec(app_state$tsev$algo_meta)), 
-                        selected = input$SE_choose_meta),
+              choices = 
+                structure(as.list(seq_along(app_state$tsev$algo_meta)),
+                                  names = 
+                            name_vec(app_state$tsev$algo_meta)), 
+              selected = input$SE_choose_meta),
             {
-            if(is.null(input$SE_choose_meta)) # no algorithm selected
+            # no algorithm selected
+            if(is.null(input$SE_choose_meta)) {
+              # meta contains the currently selected metadata
+              meta <- NULL
               p('No metadata to show')
+            }
             else {
+              # meta contains the currently selected metadata
               meta <- 
                 app_state$tsev$algo_meta[[as.numeric(input$SE_choose_meta)]]
+              # show somme basic metadata
               tagList(
                 h3(input$SE_choose_meta, '-', name(meta)),
                 p('Date: ', meta$timestamp),
@@ -60,7 +70,18 @@ output$algorithms_comp <- renderUI({
             }
             },
             # metrics custom table
+            # choice of the table
+            {if(!is.null(meta))
+              selectInput('SE_meta_seltable', 'Select table:',
+                choices = names(meta$show_table))},
+            # show the table
             tableOutput('SE_meta_table'),
+            # choice of the graph
+            {if(!is.null(meta))
+              selectInput('SE_meta_selgraph', 'Select graph:',
+                          choices = names(meta$show_graph))},
+            # show graph
+            plotOutput('SE_meta_graph'),
             # metrics custom R output
             verbatimTextOutput('SE_algo_summary')
         )
@@ -70,7 +91,20 @@ output$algorithms_comp <- renderUI({
 
 # metrics custom table
 output$SE_meta_table <- renderTable({
-  app_state$tsev$algo_meta[[as.numeric(input$SE_choose_meta)]]$show_table
+  if(!is.null(input$SE_meta_seltable))
+    app_state$tsev$
+      algo_meta[[as.numeric(input$SE_choose_meta)]]$show_table[[
+        input$SE_meta_seltable
+      ]]
+})
+
+# metrics custom graph
+output$SE_meta_graph <- renderPlot({
+  if(!is.null(input$SE_meta_selgraph))
+    app_state$tsev$
+      algo_meta[[as.numeric(input$SE_choose_meta)]]$show_graph[[
+        input$SE_meta_selgraph
+        ]]
 })
 
 # metrics custom R output

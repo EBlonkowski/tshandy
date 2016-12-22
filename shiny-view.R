@@ -200,7 +200,6 @@ algos$exponential_smoothing <- list(
   }
 )
 
-
 ui_variable_lag <- function(input, tsev, var_name) {
   map_id <- paste0('SE_map_', var_name) # SE_map_X
   D_id <- paste0('SE_', var_name, '_D') # SE_X_D
@@ -291,22 +290,29 @@ algos$shuya_svm <- list(
   },
   build = function(input, tsev) {
     # mapping of input columns
-    var_list <- get_multiple(input, c('SE_X_D', paste0('SE_', 'Y', 1:input$SE_n_predictor, '_D'))) # variable D orders
-    var_list %>% print
+    var_list <- get_multiple(input, 
+                             c('SE_X_D', 
+                               paste0('SE_', 'Y', 
+                                      1:input$SE_n_predictor, '_D'))) # variable D orders
     orders <- lapply(var_list, FUN = function(x) 1:x)
-    orders %>% print
     names(orders) <- get_multiple(input, c('SE_map_X', paste0('SE_map_', 'Y', 1:input$SE_n_predictor))) # variable names
-    orders %>% print
-    #orders <- structure(list(1:input$SE_X_D, 1:input$SE_Y1_D, 1:input$SE_Y2_D, 1:input$SE_Y3_D), 
-    #  names = c(input$SE_map_X, input$SE_map_Y1, input$SE_map_Y2, input$SE_map_Y3))
     
-    store_forecasting(tsev, function (tse) { 
-      shuya_svm(tse, input$SE_gamma, input$SE_cost, input$SE_map_X,
-                .orders_list = orders) },
-               'SVM model', input$SE_map_X, input$SE_map_out, input$SE_map_train)
+    store_forecasting(tsev, 
+                      function (tse) { 
+                        # call the algorithm
+                        shuya_svm(tse, input$SE_gamma, input$SE_cost, 
+                                  input$SE_map_X, .orders_list = orders) },
+                      # meta info
+                      'SVM model', input$SE_map_X, input$SE_map_out, 
+                      input$SE_map_train)
   }
 )
 
+#' Get multiple values from a reactive list
+#' 
+#' @param reav A reactive value object which is list valued
+#' @param js A list or vector of either names or indices of the elements to pick
+#' @return a non-reactive list of elements
 get_multiple <- function(reav, js) {
   r <- list()
   for(j in js) {

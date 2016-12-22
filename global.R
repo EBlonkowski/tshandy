@@ -9,10 +9,11 @@ max_mb_upload <- 9
 gefcom_sample <- '../data/gefcom17-sample.tsev'
 sensor_sample <- '../data/sensor.tsev'
 shss_path <- '../data/shss-mod.tsev'
+test_path <- 'g17-test.tsev'
 
 # default input dataset
-default_tsev <- gefcom_sample
-default_out_tsev <- 'out.tsev'
+default_tsev <- test_path
+default_out_tsev <- test_path
 
 ################################################################################
 # Edit stage
